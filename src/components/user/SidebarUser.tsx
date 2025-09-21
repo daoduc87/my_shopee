@@ -1,5 +1,7 @@
 import { Link, useLocation } from "react-router";
 import UserAvatar from "../UserAvatar";
+import { useAppSelector } from "../../redux/store";
+import { useGetMeQuery } from "../../services/rootApi";
 
 const sidebarMenu = [
   {
@@ -22,6 +24,8 @@ const sidebarMenu = [
   },
 ];
 export default function SidebarUser() {
+  const { data } = useGetMeQuery();
+  const userInfo = useAppSelector((state) => state.auth.userInfo.data);
   const location = useLocation();
   const activeMenu = sidebarMenu.find(
     (menu) => menu.link === location.pathname,
@@ -29,10 +33,12 @@ export default function SidebarUser() {
   return (
     <div className="w-[180px]">
       <div className="flex items-center gap-[15px]">
-        <UserAvatar className="text-xl" size={50} />
+        <UserAvatar className="flex-shrink-0 text-xl" size={50} />
         <div>
-          <p className="mb-[5px] font-bold">5c77niq39r</p>
-          <button className="flex text-[#888]">
+          <p className="mb-[5px] break-all font-bold">
+            {data?.data.name || userInfo?.email}
+          </p>
+          <button className="flex text-nowrap text-[#888]">
             <svg
               width={12}
               height={12}

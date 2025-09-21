@@ -14,10 +14,10 @@ export default function ProductDetail() {
   return (
     <>
       <Helmet>
-        <title>{data.data.name}</title>
+        <title>{data?.data.name}</title>
         <meta
           name="description"
-          content={convert(data.data.description, {
+          content={convert(data?.data.description, {
             wordwrap: 130,
             limits: {
               maxInputLength: 300,

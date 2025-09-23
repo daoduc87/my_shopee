@@ -1,8 +1,8 @@
-import { Badge, Dropdown } from "antd";
+import { Badge, Dropdown, Popover } from "antd";
 import LanguageIcon from "@mui/icons-material/Language";
 import UserAvatar from "./UserAvatar";
 import Logout from "./Logout";
-import { ShoppingCartOutlined } from "@ant-design/icons";
+import { HeartOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { Link } from "react-router";
 import {
   useGetProductsQuery,
@@ -50,8 +50,34 @@ interface Category {
 export default function Header() {
   const [inputSearch, setInputSearch] = useState("");
   const userInfo = useAppSelector((state) => state.auth.userInfo.data);
+  const favoriteIdsList = useAppSelector(
+    (state) => state.favorite.favoriteIdsList,
+  );
   const { data: dataGetProducts } = useGetProductsQuery({ name: inputSearch });
   const { data } = useReadPurchasesQuery({ status: -1 });
+  const content = (
+    <div className="space-y-3">
+      {dataGetProducts?.data.products.map((product: RootObject) => {
+        return (
+          favoriteIdsList.includes(product._id) && (
+            <Link
+              to={`/${slugify(product.name, { locale: "vi" })}/${product._id}`}
+              className="block"
+            >
+              <div className="flex items-center gap-3">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-10 w-10"
+                />
+                <p className="line-clamp-2 max-w-[320px]">{product.name}</p>
+              </div>
+            </Link>
+          )
+        );
+      })}
+    </div>
+  );
   return (
     <>
       <header className="shopee-top w-full text-sm text-white">
@@ -91,7 +117,7 @@ export default function Header() {
               />
             </a>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             <a
               href="https://help.shopee.vn/portal/4/vn/s"
               className="hover:underline"
@@ -104,6 +130,11 @@ export default function Header() {
               <LanguageIcon />
               Tiếng Việt
             </a>
+            <Popover content={content} title="Bộ sưu tập yêu thích của bạn">
+              <Badge count={favoriteIdsList.length}>
+                <HeartOutlined className="text-2xl text-white" />
+              </Badge>
+            </Popover>
             <Dropdown
               menu={{ items }}
               placement="bottomRight"

@@ -10,6 +10,9 @@ export const buyProductsSlice = createSlice({
     saveBuyProducts: (state, action) => {
       state.buyProducts = action.payload;
     },
+    clearBuyProducts: () => {
+      return initialState;
+    },
   },
 });
-export const { saveBuyProducts } = buyProductsSlice.actions;
+export const { saveBuyProducts, clearBuyProducts } = buyProductsSlice.actions;

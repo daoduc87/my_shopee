@@ -4,10 +4,13 @@ import {
   useAddToCartMutation,
   useReadPurchasesQuery,
 } from "../../services/rootApi";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useDispatch } from "react-redux";
 import { openSnackbar } from "../../redux/slices/SnackbarSlice";
-
+import { HeartTwoTone } from "@ant-design/icons";
+import { useAppSelector } from "../../redux/store";
+import { toggleFavorite } from "../../redux/slices/FavoriteSlice";
+import { addBuyProducts } from "../../redux/slices/BuyProductNow";
 interface RootObject {
   message: string;
   data: Data;
@@ -50,11 +53,20 @@ export default function ProductOption({
   data,
 }: IPropProductOption) {
   const dispatch = useDispatch();
+  const favoriteIdsList = useAppSelector(
+    (state) => state.favorite.favoriteIdsList,
+  );
+  const navigate = useNavigate();
   const { id } = useParams();
   const [count, setCount] = useState(1);
   const [addToCart] = useAddToCartMutation();
   const { refetch } = useReadPurchasesQuery({ status: -1 });
   const productShirt = data?.data.category.name === "Áo thun";
+  console.log({ data });
+  const handleBuyProducts = () => {
+    dispatch(addBuyProducts({ ...data.data, buy_count: count }));
+    navigate("/checkout");
+  };
   return (
     <div className="space-y-5 text-sm">
       <div className="flex gap-4">
@@ -63,27 +75,37 @@ export default function ProductOption({
         </h3>
         <DeliveryTime />
       </div>
-      <div className="flex gap-4">
-        <h3 className="w-[100px] text-base font-normal leading-5 text-[#757575]">
-          An tâm mua sắm cùng Shopee
-        </h3>
-        {productShirt ? (
-          <p className="mt-1 flex items-center gap-2 text-red-500">
-            <img
-              src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/281bf4388d58a7cc965a.svg"
-              alt=""
-            />
-            Bảo hiểm Thời trang
-          </p>
-        ) : (
-          <p className="mt-1 flex items-center gap-2 text-red-500">
-            <img
-              src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/281bf4388d58a7cc965a.svg"
-              alt=""
-            />
-            Chính hãng 100%
-          </p>
-        )}
+      <div className="flex items-center gap-10">
+        <div className="flex gap-4">
+          <h3 className="w-[100px] text-base font-normal leading-5 text-[#757575]">
+            An tâm mua sắm cùng Shopee
+          </h3>
+          {productShirt ? (
+            <p className="mt-1 flex items-center gap-2 text-red-500">
+              <img
+                src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/281bf4388d58a7cc965a.svg"
+                alt=""
+              />
+              Bảo hiểm Thời trang
+            </p>
+          ) : (
+            <p className="mt-1 flex items-center gap-2 text-red-500">
+              <img
+                src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/281bf4388d58a7cc965a.svg"
+                alt=""
+              />
+              Chính hãng 100%
+            </p>
+          )}
+        </div>
+        <p className="flex w-[130px] gap-4 text-base font-normal leading-5 text-[#757575]">
+          Có thể bạn yêu thích
+          <HeartTwoTone
+            className="text-left"
+            twoToneColor={` ${favoriteIdsList.includes(data?.data._id) ? "#ef4444" : "#ccc"}`}
+            onClick={() => dispatch(toggleFavorite(data?.data._id))}
+          />
+        </p>
       </div>
       <div>
         <h3 className="mb-2 text-base font-normal uppercase leading-5 text-[#757575]">
@@ -184,7 +206,10 @@ export default function ProductOption({
           />
           Thêm Vào Giỏ Hàng
         </button>
-        <button className="w-[180px] rounded bg-[#f05d40] py-3 text-white hover:bg-red-600">
+        <button
+          className="w-[180px] rounded bg-[#f05d40] py-3 text-white hover:bg-red-600"
+          onClick={handleBuyProducts}
+        >
           Mua Ngay
         </button>
       </div>

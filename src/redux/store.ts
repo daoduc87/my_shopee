@@ -22,6 +22,8 @@ import {
 } from "react-redux";
 import { buyProductsSlice } from "./slices/BuyProductsSlice";
 import { UserSlice } from "./slices/UserSlice";
+import { FavoriteSlice } from "./slices/FavoriteSlice";
+import { BuyProductNow } from "./slices/BuyProductNow";
 
 const persistConfig = {
   key: "root",
@@ -34,6 +36,8 @@ const reducers = combineReducers({
   dialog: DialogSlice.reducer,
   buy: buyProductsSlice.reducer,
   user: UserSlice.reducer,
+  favorite: FavoriteSlice.reducer,
+  buyNow: BuyProductNow.reducer,
   [rootApi.reducerPath]: rootApi.reducer,
 });
 const _persistedReducer = persistReducer(persistConfig, reducers);

@@ -1,5 +1,9 @@
 import { Link } from "react-router";
 import slugify from "slugify";
+import { HeartTwoTone } from "@ant-design/icons";
+import { useAppSelector } from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { toggleFavorite } from "../../redux/slices/FavoriteSlice";
 interface RootObject {
   _id: string;
   images: string[];
@@ -46,14 +50,18 @@ interface Category {
   __v: number;
 }
 const ProductItem = ({ paginationProducts }: IPropPaginationProduct) => {
+  const dispatch = useDispatch();
+  const favoriteIdsList = useAppSelector(
+    (state) => state.favorite.favoriteIdsList,
+  );
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
       {paginationProducts?.map((product: ProductItemType) => (
-        <Link
-          to={`/${slugify(product.name, { locale: "vi" })}/${product._id}`}
-          key={product._id}
-        >
-          <div className="h-full cursor-pointer rounded-2xl bg-white p-3 shadow transition hover:shadow-lg">
+        <div className="relative h-full cursor-pointer rounded-2xl bg-white p-3 shadow transition hover:shadow-lg">
+          <Link
+            to={`/${slugify(product.name, { locale: "vi" })}/${product._id}`}
+            key={product._id}
+          >
             <img
               src={product.image}
               alt={product.name}
@@ -72,8 +80,13 @@ const ProductItem = ({ paginationProducts }: IPropPaginationProduct) => {
                 <p className="text-[12px]">Đã bán {product.sold}</p>
               </div>
             </div>
-          </div>
-        </Link>
+          </Link>
+          <HeartTwoTone
+            className="absolute right-2 top-2"
+            twoToneColor={` ${favoriteIdsList.includes(product._id) ? "#ef4444" : "#ccc"}`}
+            onClick={() => dispatch(toggleFavorite(product._id))}
+          />
+        </div>
       ))}
     </div>
   );

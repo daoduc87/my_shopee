@@ -87,9 +87,9 @@ export default function CheckoutPage() {
             </div>
             <div className="col-span-2">
               <span>
-                {(productBuyNow.price * productBuyNow.buy_count).toLocaleString(
-                  "vi-VN",
-                )}
+                {(
+                  productBuyNow?.price * productBuyNow.buy_count
+                ).toLocaleString("vi-VN")}
                 ₫
               </span>
             </div>

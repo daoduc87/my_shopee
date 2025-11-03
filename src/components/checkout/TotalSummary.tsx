@@ -65,7 +65,7 @@ export default function TotalSummary() {
     },
     0,
   );
-  const totalSummaryBuyNow = productBuyNow.price * productBuyNow.buy_count;
+  const totalSummaryBuyNow = productBuyNow?.price * productBuyNow?.buy_count;
   const { refetch: refetchCart } = useReadPurchasesQuery({ status: -1 });
   const { refetch } = useReadPurchasesQuery({ status: 1 });
   const [buyProducts] = useBuyProductsMutation();
